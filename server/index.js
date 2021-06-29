@@ -1,6 +1,7 @@
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser')
 const config = require('../config/db.js');
 const path = require('path');
 const cors = require('cors');
@@ -9,10 +10,15 @@ const corsOption = {
   "origin": "*",
   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
   "preflightContinue": false,
-  "optionsSuccessStatus": 204
+  "optionsSuccessStatus": 204,
+  // cookie: {
+  //   secure: false,
+  // },
 };
 app.use(cors(corsOption))
 // app.use(express.static(path.join(__dirname,"../build")));
+app.use(cookieParser())
+// app.use(express.session());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 

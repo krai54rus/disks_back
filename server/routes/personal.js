@@ -1,4 +1,14 @@
+const crypto = require('crypto');
 module.exports = function(app,db) {
+    app.get('/personal/getUnique',function(req,res){
+        console.log(req.cookies);
+        if (!req.cookies.clientId || req.cookies.clientId == '') {
+            const uniqueId = crypto.randomBytes(16).toString('hex');
+            res.send(JSON.stringify({ status: 'OK', result: uniqueId }));
+          } else {
+            res.send(JSON.stringify({ status: 'ERROR' }));
+          }
+    });
     app.get('/personal/auth', function(req,res){
         console.log(req.query);
         res.send(req.query);
