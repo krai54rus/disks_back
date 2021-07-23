@@ -17,7 +17,6 @@ module.exports = function(app,db) {
           if(err) return console.log(err);
             if (user) {
                 res.send(user);
-                
             }else{
                 res.send(new Error('Пользователь не найден'));
             }
@@ -35,4 +34,13 @@ module.exports = function(app,db) {
             }
         });
     });
+
+    // app.get('/getOrders', function(req,res){
+  //   const collection = db.db("diplom").collection("personal");
+  //   collection.find({}).toArray(function(err, auto){
+  //       if(err) return console.log(err);
+  //       console.log('/auto');
+  //       res.send(auto);
+  //   });
+  // });
   };
