@@ -1,8 +1,9 @@
 module.exports = function(app,db) {
     app.get('/disks', function(req,res){
-      const collection = db.db("portal").collection("beer");
+      const collection = db.db("diplom").collection("disks");
       collection.find({}).toArray(function(err, disks){
           if(err) return console.log(err);
+          console.log('/disks/all');
           res.send(disks);
       });
     });
@@ -10,14 +11,6 @@ module.exports = function(app,db) {
       const collection = db.db("diplom").collection("disks");
       collection.find({main:true}).toArray(function(err, disks){
           if(err) return console.log(err);
-          res.send(disks);
-      });
-    });
-    app.get('/disks/all', function(req,res){
-      const collection = db.db("diplom").collection("disks");
-      collection.find({}).toArray(function(err, disks){
-          if(err) return console.log(err);
-          console.log('/disks/all');
           res.send(disks);
       });
     });
