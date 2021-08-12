@@ -14,9 +14,12 @@ const corsOption = {
   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
   "preflightContinue": false,
   "optionsSuccessStatus": 204,
-  // cookie: {
-  //   secure: false,
-  // },
+  allowedHeaders:
+      'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Observe,Set-Cookie,Connection',
+  cookie: {
+    secure: false,
+  },
+  credentials: true,
 };
 app.use(cors(corsOption))
 

@@ -4,9 +4,9 @@ module.exports = function(app,db) {
         console.log(req.cookies);
         if (!req.cookies.clientId || req.cookies.clientId == '') {
             const uniqueId = crypto.randomBytes(16).toString('hex');
-            res.send(JSON.stringify({ status: 'OK', result: uniqueId }));
+            res.send({ status: 'OK', result: uniqueId });
           } else {
-            res.send(JSON.stringify({ status: 'ERROR' }));
+            res.send({ status: 'ERROR' });
           }
     });
     app.get('/personal/auth', function(req,res){

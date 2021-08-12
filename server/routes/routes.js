@@ -6,4 +6,5 @@ module.exports = function(app,db) {
   require('./constructor')(app,db);
   require('./personal')(app,db);
   require('./cart')(app,db);
+  require('./users')(app,db);
 };
