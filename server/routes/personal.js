@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 module.exports = function(app,db) {
     app.get('/personal/getUnique',function(req,res){
-        console.log(req.cookies);
+        console.log('cookie',req.cookies);
         if (!req.cookies.clientId || req.cookies.clientId == '') {
             const uniqueId = crypto.randomBytes(16).toString('hex');
             res.send({ status: 'OK', result: uniqueId });

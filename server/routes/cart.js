@@ -3,11 +3,17 @@ module.exports = function(app,db) {
   app.get('/cart/getCart', function(req,res){
     const cart = db.db("diplom").collection("cart");
     let findId = {};
+    console.log(req.cookies);
     let userCookieId = req.cookies.userId;
     if (userCookieId) {
       findId = { userId: userCookieId };
     } else {
-      findId = { clientId: req.cookies.clientId };
+      if (req.cookies.clientId ) {
+        findId = { clientId: req.cookies.clientId };
+      } else {
+        res.send([]);
+        return;
+      }
     }
     let cartObj = cart.findOne(findId,function(err, cart){
       console.log('cart', cart);
@@ -26,7 +32,8 @@ module.exports = function(app,db) {
   app.post('/cart/addToCart', function(req,res){
     const cart = db.db("diplom").collection("cart");
     // Поиск корзины в БД
-    const product = res.body.prodInfo;
+    console.log(req.body);
+    const product = req.body;
     let findId = {};
     let userCookieId = req.cookies.userId;
     if (userCookieId) {
@@ -34,8 +41,18 @@ module.exports = function(app,db) {
     } else {
       findId = { clientId: req.cookies.clientId };
     }
+    console.log(req.cookies);
+    const newCartObj = {
+      prods: JSON.stringify(product),
+      date_create: new Date(),
+    };
+
+    const newC = Object.assign(findId, newCartObj);
+    console.log('newCart ', newC);
+    const newCart = cart.insertOne(newC);
+    return ;
     let cartObj = cart.findOne(findId,function(err, cartObj){
-      console.log(cartObj);
+      console.log('cartObj ',cartObj);
         if(err) return console.log(err);
         if (cartObj) {
           let allProds = [];
@@ -43,16 +60,16 @@ module.exports = function(app,db) {
           // Если есть дубликат - прибавляет количество товара
           if (cartObj.prods !== '') {
             allProds = JSON.parse(cartObj.prods);
-            product.forEach((item) => {
+            // product.forEach((item) => {
               const dublicate = allProds.find(
-                (bufferItem) => bufferItem.code === item.code,
+                (bufferItem) => bufferItem.code === product.code,
               );
               if (dublicate) {
                 dublicate.count += item.count;
               } else {
                 allProds.push(item);
               }
-            });
+            // });
             newProds = JSON.stringify(allProds);
           } else {
             newProds = JSON.stringify(product);
@@ -69,12 +86,13 @@ module.exports = function(app,db) {
             prods: JSON.stringify(product),
             date_create: new Date(),
           };
+
           const newC = Object.assign(findId, newCartObj);
-          const newCart = cart.save(newC);
+          console.log('newCart ', newC);
+          const newCart = cart.insertOne(newC);
           return { status: 'OK', result: product };
         }
     });
-    console.log('cartObj', cartObj);
   });
 
   app.post('/cart/plusCount', function(req,res){

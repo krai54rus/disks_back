@@ -10,19 +10,27 @@ const cors = require('cors');
 const app = express();
 const uri = config.url;
 const corsOption = {
-  "origin": "*",
-  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  "preflightContinue": false,
-  "optionsSuccessStatus": 204,
-  allowedHeaders:
-      'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Observe,Set-Cookie,Connection',
-  cookie: {
-    secure: false,
+  origin: function (origin, callback) {
+    // console.log(origin);
+    // if (whitelist.indexOf(origin) !== -1) {
+    //   console.log("allowed cors for:", origin)
+    //   callback(null, true)
+    // } else {
+    //   console.log("blocked cors for:", origin)
+    //   callback(new Error('Not allowed by CORS'))
+    // }
+    callback(null, true);
   },
+  allowedHeaders:
+    'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Observe,Set-Cookie,Connection',
+  methods: 'GET,PUT,POST,PATCH,DELETE,UPDATE,OPTIONS',
   credentials: true,
 };
-app.use(cors(corsOption))
-
+// app.use(express.static(path.join(__dirname,"../build")));
+app.use(cookieParser())
+// app.use(express.session());
+app.use(express.urlencoded({extended: true}))
+app.use(bodyParser.json());
 app.use(session({
   secret: 'keyboard cat',
   store: MongoStore.create({
@@ -32,13 +40,10 @@ app.use(session({
   }),
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: true }
+  cookie: { secure: false }
 }))
-// app.use(express.static(path.join(__dirname,"../build")));
-app.use(cookieParser())
-// app.use(express.session());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(cors(corsOption))
+
 
 
 const mongoClient = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -61,7 +66,7 @@ mongoClient.connect((err, client) => {
   // app.use('/amazon', amazonRouter);
   // app.use('/catalog', catalogRouter);
 
-  app.listen(6000, () => {
+  app.listen(5000, () => {
     console.log('сервер поехал');
   })
 });

@@ -4,6 +4,7 @@ module.exports = function(app,db) {
         res.send('ky');
     });
     app.get('/users/uniqueId', function(req,res){
+        console.log(req.cookies);
         if (!req.cookies.clientId || req.cookies.clientId == '') {
             const uniqueId = crypto.randomBytes(16).toString('hex');
             res.send({ status: 'OK', result: uniqueId });
