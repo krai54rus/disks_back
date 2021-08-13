@@ -28,7 +28,6 @@ const corsOption = {
 };
 // app.use(express.static(path.join(__dirname,"../build")));
 app.use(cookieParser())
-// app.use(express.session());
 app.use(express.urlencoded({extended: true}))
 app.use(bodyParser.json());
 app.use(session({
