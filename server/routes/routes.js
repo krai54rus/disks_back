@@ -7,4 +7,5 @@ module.exports = function(app,db) {
   require('./personal')(app,db);
   require('./cart')(app,db);
   require('./orders')(app,db);
+  require('./users')(app,db);
 };
