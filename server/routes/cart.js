@@ -32,7 +32,7 @@ module.exports = function(app,db) {
   app.post('/cart/addToCart', function(req,res){
     const cart = db.db("diplom").collection("cart");
     // Поиск корзины в БД
-    console.log(req.body);
+    // console.log(req.body);
     const product = req.body;
     let findId = {};
     let userCookieId = req.cookies.userId;
@@ -41,56 +41,55 @@ module.exports = function(app,db) {
     } else {
       findId = { clientId: req.cookies.clientId };
     }
-    console.log(req.cookies);
-    const newCartObj = {
-      prods: JSON.stringify(product),
-      date_create: new Date(),
-    };
+    // const newCartObj = {
+    //   prods: [product],
+    //   date_create: new Date(),
+    // };
 
-    const newC = Object.assign(findId, newCartObj);
-    console.log('newCart ', newC);
-    const newCart = cart.insertOne(newC);
-    return ;
+    // const newC = Object.assign(findId, newCartObj);
+    // console.log('newCart ', newC);
+    // const newCart = cart.insertOne(newC);
     let cartObj = cart.findOne(findId,function(err, cartObj){
-      console.log('cartObj ',cartObj);
+      // console.log('cartObj ',cartObj);
         if(err) return console.log(err);
         if (cartObj) {
           let allProds = [];
           let newProds = '';
           // Если есть дубликат - прибавляет количество товара
-          if (cartObj.prods !== '') {
-            allProds = JSON.parse(cartObj.prods);
+          if (cartObj.prods !== '' && cartObj.prods.length) {
+            allProds = cartObj.prods;
             // product.forEach((item) => {
               const dublicate = allProds.find(
                 (bufferItem) => bufferItem.code === product.code,
               );
               if (dublicate) {
-                dublicate.count += item.count;
+                dublicate.count += product.count;
               } else {
-                allProds.push(item);
+                allProds.push(product);
               }
+              console.log('after: ', dublicate);
             // });
-            newProds = JSON.stringify(allProds);
+            newProds = allProds;
           } else {
-            newProds = JSON.stringify(product);
+            newProds = [product];
           }
           // Обновляет корзину
-          const newCart = cart.update(
-            { id: cartObj.id },
-            { prods: newProds },
+          const newCart = cart.updateOne(
+            { _id: cartObj._id },
+            {$set:{ prods: newProds }},
           );
-          return { status: 'OK', result: JSON.parse(newProds) };
+          res.send({ status: 'OK', result: newProds });
         } else {
           // Создаем корзину и сохраняем массив товаров
           const newCartObj = {
-            prods: JSON.stringify(product),
+            prods: [product],
             date_create: new Date(),
           };
 
           const newC = Object.assign(findId, newCartObj);
           console.log('newCart ', newC);
           const newCart = cart.insertOne(newC);
-          return { status: 'OK', result: product };
+          res.send({ status: 'OK', result: product });
         }
     });
   });
