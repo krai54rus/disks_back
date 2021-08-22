@@ -3,7 +3,7 @@ module.exports = function(app,db) {
         const collection = db.db("diplom").collection("auto");
         collection.find({}).toArray(function(err, auto){
             if(err) return console.log(err);
-            console.log('/auto');
+            // console.log('/auto');
             res.send(auto);
         });
     });
