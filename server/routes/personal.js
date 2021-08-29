@@ -10,7 +10,7 @@ module.exports = function(app,db) {
           }
     });
     app.post('/personal/auth', function(req,res){
-        console.log('body auth ',req.body);
+        console.log('personal/auth ',req.body);
         const session = req.session;
         const query = req.body;
         // res.send(req.query);
@@ -20,13 +20,15 @@ module.exports = function(app,db) {
             if (user) {
                 session.isAuth = true;
                 session.login = user.login;
-                res.send({status:'OK', result: user});
+                const { password, ...userObj } = user;
+                res.send({status:'OK', result: userObj});
             }else{
                 res.send({status:'ERROR', result: 'Пользователь не найден'});
             }
         });
     });
     app.get('/personal/checkAuth',function(req,res){
+        console.log('personal/checkAuth ',req.body);
         const session = req.session;
         const cookies = req.cookies;
         const query = req.query;
@@ -44,14 +46,31 @@ module.exports = function(app,db) {
         }
     });
     app.post('/personal/register', function(req,res){
+        console.log('personal/checkAuth ',req.body);
+        const session = req.session;
         const collection = db.db("diplom").collection("personal");
         collection.findOne({login:req.body.login}, function(err, user){
             if(err) return console.log(err);
             if (user) {
-                res.send(new Error('Пользователь уже существует'));
+                // res.send(new Error('Пользователь уже существует'));
+                res.send({status:'ERROR', result: 'Такой пользователь уже существует'});
             }else{
-                const newUser = collection.insertOne(req.body);
-                res.send(newUser);
+                const userRegisterObj = {
+                    login:req.body.login,
+                    password:req.body.password,
+                    user:{},
+                    disks:[],
+                    garage:[],
+                };
+                const newUserReq = collection.insertOne(userRegisterObj, function(err, newUser){
+                    if(err) return console.log(err);
+                    session.isAuth = true;
+                    session.login = req.body.login;
+                    const { password, ...userObj } = userRegisterObj;
+                    console.log('userObj ', userObj);
+                    res.send({status:'OK', result: userObj});
+                });
+                
             }
         });
     });
