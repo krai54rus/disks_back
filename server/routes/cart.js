@@ -19,14 +19,12 @@ module.exports = function(app,db) {
       console.log('cart', cart);
         if(err) return console.log(err);
         if (cart) {
-          // return cart;
           res.send(cart);
+          return;
         }
-        // return [];
         res.send([]);
+        return;
     });
-    // console.log('cartObj',cartObj);
-    // res.send(cartObj);
   });
 
   app.post('/cart/addToCart', function(req,res){

@@ -35,7 +35,7 @@ module.exports = function(app,db) {
         if (session.login && session.isAuth && session.login === cookies.login) {
             const collection = db.db("diplom").collection("personal");
             collection.findOne({login:cookies.login}, function(err, user){
-                if(err) return console.log(err);
+                if(err) return console.log('checkAuth error',err);
                 if (user) {
                     const { password, ...userObj } = user;
                     res.send({status:'OK', result: userObj});
@@ -43,6 +43,8 @@ module.exports = function(app,db) {
                     res.send({status:'ERROR', result: 'Пользователь не найден'});
                 }
             });
+        }else {
+            res.send({status:'ERROR', result: 'Не авторизован'});
         }
     });
     app.post('/personal/register', function(req,res){
@@ -70,7 +72,7 @@ module.exports = function(app,db) {
                     console.log('userObj ', userObj);
                     res.send({status:'OK', result: userObj});
                 });
-                
+
             }
         });
     });
