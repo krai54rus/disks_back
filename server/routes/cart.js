@@ -3,10 +3,10 @@ module.exports = function(app,db) {
   app.get('/cart/getCart', function(req,res){
     const cart = db.db("diplom").collection("cart");
     let findId = {};
-    console.log(req.cookies);
-    let userCookieId = req.cookies.userId;
-    if (userCookieId) {
-      findId = { userId: userCookieId };
+    // console.log(req.cookies);
+    let userCookieLogin = req.cookies.login;
+    if (userCookieLogin) {
+      findId = { userLogin: userCookieLogin };
     } else {
       if (req.cookies.clientId ) {
         findId = { clientId: req.cookies.clientId };
@@ -16,7 +16,7 @@ module.exports = function(app,db) {
       }
     }
     let cartObj = cart.findOne(findId,function(err, cart){
-      console.log('cart', cart);
+      // console.log('cart', cart);
         if(err) return console.log(err);
         if (cart) {
           res.send(cart);
@@ -33,9 +33,9 @@ module.exports = function(app,db) {
     // console.log(req.body);
     const product = req.body;
     let findId = {};
-    let userCookieId = req.cookies.userId;
-    if (userCookieId) {
-      findId = { userId: userCookieId };
+    let userCookieLogin = req.cookies.login;
+    if (userCookieLogin) {
+      findId = { userLogin: userCookieLogin };
     } else {
       findId = { clientId: req.cookies.clientId };
     }
